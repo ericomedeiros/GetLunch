@@ -1,0 +1,5 @@
+package com.getLunch.backend.message;
+
+public class Restaurante {
+
+}
