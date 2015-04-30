@@ -1,2 +1,2 @@
 # GetLunch
-Selecionador de restaurantes semanal para almoço.
+Selecionador de restaurantes semanal para almoço...
