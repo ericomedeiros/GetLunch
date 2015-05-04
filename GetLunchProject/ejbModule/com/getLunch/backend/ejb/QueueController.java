@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.getLunch.backend.message.Restaurante;
+import com.getLunch.backend.utils.Listener;
 import com.getLunch.backend.utils.Sender;
 import com.getLunch.backend.utils.VotacaoSemanal;
 import com.getLunch.ui.Cliente;
@@ -42,14 +43,7 @@ import com.getLunch.ui.Cliente;
  * Message-Driven Bean implementation class for: QueueController
  *
  */
-@MessageDriven(
-		activationConfig = { 
-				@ActivationConfigProperty(
-						propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-				@ActivationConfigProperty(
-						propertyName = "destination", propertyValue = "queue/MyQueue")
-		}, 
-		mappedName = "MyQueue" )
+
 public class QueueController extends JFrame implements MessageListener {
 	
 	/**
@@ -212,6 +206,7 @@ public class QueueController extends JFrame implements MessageListener {
 		
 		for (int i = 0; i < nrCliente; i++) {
 			Cliente cli = new Cliente(Arrays.copyOf(restaurantes.toArray(), restaurantes.toArray().length, Restaurante[].class));
+			Listener.addTopicListener(cli);
 			cli.setVisible(true);
 		}
 		
@@ -248,9 +243,12 @@ public class QueueController extends JFrame implements MessageListener {
                 ObjectMessage msg = (ObjectMessage) message;
                 Restaurante re = (Restaurante) msg.getObject();
                 System.out.println("Restaurante recebido: "+re);
+                
                 currentSemana.addVoto(re);
                 nrVotados++;
+                System.out.println("Qt, de votos:" + nrVotados);
                 if(nrVotados == nrCliente){
+                	System.out.println("Entrou no if");
                 	Sender.sendObjectMessageToTopic(currentSemana.getToDayRestaurante());
                 	nrCliente = 0;
                 	nrVotados = 0;
@@ -285,6 +283,7 @@ public class QueueController extends JFrame implements MessageListener {
 			public void run() {
 				try {
 					QueueController frame = new QueueController();
+					Listener.addQueueReceiver(frame);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

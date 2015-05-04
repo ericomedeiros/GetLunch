@@ -92,29 +92,6 @@ public class Cliente extends JFrame implements MessageListener{
 		btnFechar.setEnabled(false);
 		btnFechar.setBounds(313, 223, 89, 23);
 		contentPane.add(btnFechar);
-		
-		try {
-			addListenerTopic();
-		} catch (NamingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (JMSException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private void addListenerTopic() throws NamingException, JMSException {
-		// TODO Auto-generated method stub
-		
-		Context context = ClientUtility.getInitialContextForClient();
-        TopicConnectionFactory factory = (TopicConnectionFactory) context.lookup(CONNECTION_FACTORY);
-        TopicConnection connection = factory.createTopicConnection();
-        TopicSession session = connection.createTopicSession(false, TopicSession.AUTO_ACKNOWLEDGE);
-        Topic topic = (Topic) context.lookup(TOPIC_LOOKUP);
-        TopicSubscriber topicSubscriber = session.createSubscriber(topic);
-        topicSubscriber.setMessageListener(this);
-		
 	}
 	
 	public void onMessage(Message message){

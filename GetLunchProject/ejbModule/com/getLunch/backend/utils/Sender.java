@@ -23,13 +23,6 @@ public class Sender {
 	private static final String QUEUE_LOOKUP = "queue/MyQueue";
 	private static final String TOPIC_LOOKUP = "topic/MyTopic";
     private static final String CONNECTION_FACTORY = "ConnectionFactory";
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-	}
 	
 	public static void sendMessageToQueue() {
         try {
@@ -81,12 +74,13 @@ public class Sender {
             Topic topic = (Topic) context.lookup(TOPIC_LOOKUP);
             TopicPublisher topicPublisher = session.createPublisher(topic);
             connection.start();
- 
+
             ObjectMessage message = session.createObjectMessage();
             message.setObject(re);
+            topicPublisher.send(message);
             topicPublisher.publish(message);
-            session.close();
-            connection.close();
+            topicPublisher.close();
+            System.out.println("Mensagem enviada");
         } catch (NamingException e) {
             e.printStackTrace();
         } catch (JMSException e) {
