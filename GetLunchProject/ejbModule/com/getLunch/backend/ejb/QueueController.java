@@ -93,11 +93,11 @@ public class QueueController extends JFrame implements MessageListener {
 		
 		JSeparator separator = new JSeparator();
 		separator.setToolTipText("Restaurantes");
-		separator.setBounds(0, 84, 800, 14);
+		separator.setBounds(0, 84, 552, 14);
 		contentPane.add(separator);
 		
 		JLabel lblRestaurante = new JLabel("Restaurante");
-		lblRestaurante.setBounds(10, 11, 67, 14);
+		lblRestaurante.setBounds(10, 11, 80, 14);
 		contentPane.add(lblRestaurante);
 		
 		JLabel lblNome = new JLabel("Nome:");
@@ -173,7 +173,7 @@ public class QueueController extends JFrame implements MessageListener {
 		
     }
 
-	protected void startSelectLunch(String text) {
+	private void startSelectLunch(String text) {
 		// TODO Auto-generated method stub
 		
 		if(restaurantes.size() <= 0){
@@ -212,7 +212,7 @@ public class QueueController extends JFrame implements MessageListener {
 		
 	}
 
-	protected void deleteRestaurante(String text) {
+	private void deleteRestaurante(String text) {
 		// TODO Auto-generated method stub
 		Restaurante re = new Restaurante(text, restaurantes.size());
     	if(!restaurantes.contains(re)){

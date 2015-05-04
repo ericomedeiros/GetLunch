@@ -23,8 +23,10 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
+import com.getLunch.backend.ejb.QueueController;
 import com.getLunch.backend.message.Restaurante;
 import com.getLunch.backend.utils.ClientUtility;
+import com.getLunch.backend.utils.Listener;
 import com.getLunch.backend.utils.Sender;
 
 import java.awt.event.ActionListener;
@@ -75,7 +77,7 @@ public class Cliente extends JFrame implements MessageListener{
 				
 			}
 		});
-		btnSelecionar.setBounds(160, 66, 89, 23);
+		btnSelecionar.setBounds(160, 66, 100, 23);
 		contentPane.add(btnSelecionar);
 		
 		label = new JLabel("");
@@ -102,12 +104,13 @@ public class Cliente extends JFrame implements MessageListener{
                 TextMessage msg = (TextMessage) message;
                 System.out.println("Message is : " + msg.getText());
             } else if (message instanceof ObjectMessage) {
-                System.out.println("Queue: I received an ObjectMessage at "
-                        + new Date());
+                
                 ObjectMessage msg = (ObjectMessage) message;
-                Restaurante employee = (Restaurante) msg.getObject();
-                System.out.println("Restaurante: ");
-                System.out.println(employee);
+                Restaurante re = (Restaurante) msg.getObject();
+                String st = label.getText() + "\n" +
+                		"\n" +
+                		"E o restaurante escolhido foi: "+ re + ". Por favor finalize a operação para escolher o próximo almoço";
+                label.setText(st);
                 btnFechar.setEnabled(true);
             } else {
                 System.out.println("Not valid message for this Queue MDB");
@@ -116,4 +119,5 @@ public class Cliente extends JFrame implements MessageListener{
             e.printStackTrace();
         }
 	}
+	
 }
