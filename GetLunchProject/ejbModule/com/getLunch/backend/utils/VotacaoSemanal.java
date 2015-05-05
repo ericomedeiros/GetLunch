@@ -70,6 +70,36 @@ public class VotacaoSemanal {
 		return re;
 	}
 	
+	public int getTotalVotosOfDate(Date data){
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		
+		int nrDia = cal.get(Calendar.DAY_OF_WEEK);
+		
+		nrDia = nrDia-2;
+		
+		if(nrDia < 0) 
+			nrDia = 6;
+		
+		return votacaodias[nrDia].getTotalVotos();
+	}
+	
+	public boolean checkHasVotosOfDate(Date data){
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		
+		int nrDia = cal.get(Calendar.DAY_OF_WEEK);
+		
+		nrDia = nrDia-2;
+		
+		if(nrDia < 0) 
+			nrDia = 6;
+		
+		return votacaodias[nrDia].checkHasVotos();
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

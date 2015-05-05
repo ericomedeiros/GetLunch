@@ -35,5 +35,7 @@ public class Votacao {
 	public void addVoto(){
 		this.votos++;
 	}
-
+	public boolean hasVotos(){
+		return votos > 0;
+	}
 }

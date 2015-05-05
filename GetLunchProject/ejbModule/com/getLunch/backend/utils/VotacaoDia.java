@@ -58,5 +58,26 @@ public class VotacaoDia {
 		
 	}
 	
+	public int getTotalVotos(){
+		
+		int total = 0;
+		
+		for (int i = 0; i < votacoes.length; i++) {
+			total += votacoes[i].getVotos();
+		}
+		
+		return total;
+		
+	}
+	
+	public boolean checkHasVotos(){
+		for (int i = 0; i < votacoes.length; i++) {
+			if(votacoes[i].hasVotos()){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
 }

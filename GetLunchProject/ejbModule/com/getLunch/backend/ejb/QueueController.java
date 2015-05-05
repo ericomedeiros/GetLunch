@@ -62,7 +62,7 @@ public class QueueController extends JFrame implements MessageListener {
 	private ArrayList<VotacaoSemanal> 	votosSemanais;
 	private VotacaoSemanal				currentSemana; 
 	private int 						nrCliente;
-	private int 						nrVotados;
+	private Date						currentDate;
 	
 	private void initiateApp() {
 		// TODO Auto-generated method stub
@@ -70,8 +70,7 @@ public class QueueController extends JFrame implements MessageListener {
     	votosSemanais = new ArrayList<VotacaoSemanal>();
     	currentSemana = null;
     	nrCliente     = 0;
-    	nrVotados	  = 0;
-    	
+    	currentDate   = new Date();
     	
 	}
 	
@@ -183,7 +182,10 @@ public class QueueController extends JFrame implements MessageListener {
 		if(votosSemanais.size() <= 0 || currentSemana == null){
 			
 			currentSemana = new VotacaoSemanal(Arrays.copyOf(restaurantes.toArray(), restaurantes.toArray().length, Restaurante[].class));
-			System.out.println(currentSemana);
+		}
+		if(currentSemana.checkHasVotosOfDate(currentDate)){
+			JOptionPane.showMessageDialog(null, "Já aconteceu uma votação neste dia, espere até o próximo para votar.");
+			return;
 		}
 		
 		try {
@@ -210,6 +212,9 @@ public class QueueController extends JFrame implements MessageListener {
 			cli.setVisible(true);
 		}
 		
+		btnCriar.setEnabled(false);
+		btnDeletar.setEnabled(false);
+		btnIniciar.setEnabled(false);
 	}
 
 	private void deleteRestaurante(String text) {
@@ -245,13 +250,14 @@ public class QueueController extends JFrame implements MessageListener {
                 System.out.println("Restaurante recebido: "+re);
                 
                 currentSemana.addVoto(re);
-                nrVotados++;
-                System.out.println("Qt, de votos:" + nrVotados);
-                if(nrVotados == nrCliente){
+                
+                if(currentSemana.getTotalVotosOfDate(currentDate) == nrCliente){
                 	System.out.println("Entrou no if");
                 	Sender.sendObjectMessageToTopic(currentSemana.getToDayRestaurante());
                 	nrCliente = 0;
-                	nrVotados = 0;
+                	btnCriar.setEnabled(true);
+            		btnDeletar.setEnabled(true);
+            		btnIniciar.setEnabled(true);
                 }
                 
             } else {

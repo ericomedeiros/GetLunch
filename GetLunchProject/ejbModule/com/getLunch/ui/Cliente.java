@@ -35,11 +35,9 @@ import java.util.Date;
 
 public class Cliente extends JFrame implements MessageListener{
 	
-	private static final String 	TOPIC_LOOKUP = "topic/MyTopic";
-    private static final String 	CONNECTION_FACTORY = "ConnectionFactory";
 	private static final long 		serialVersionUID = 1L;
 	private JPanel 					contentPane;
-	private JComboBox 				comboBox;
+	private JComboBox<Restaurante>	comboBox;
 	private JLabel 					label;
 	private JButton 				btnSelecionar;
 	private JButton 				btnFechar;
@@ -48,9 +46,6 @@ public class Cliente extends JFrame implements MessageListener{
 	 * Launch the application.
 	 */
 
-	/**
-	 * Create the frame.
-	 */
 	public Cliente(Restaurante[] restaurantes) {
 		setTitle("Selecionador de restaurante");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -60,7 +55,7 @@ public class Cliente extends JFrame implements MessageListener{
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		comboBox = new JComboBox(restaurantes);
+		comboBox = new JComboBox<Restaurante>(restaurantes);
 		comboBox.setBounds(23, 21, 379, 20);
 		
 		contentPane.add(comboBox);
