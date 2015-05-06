@@ -49,6 +49,7 @@ public class Cliente extends JFrame implements MessageListener{
 	 */
 
 	public Cliente(Restaurante[] restaurantes) {
+		
 		setTitle("Selecionador de restaurante");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 450, 295);
@@ -104,10 +105,10 @@ public class Cliente extends JFrame implements MessageListener{
 	public void onMessage(Message message){
 		try {
             if (message instanceof TextMessage) {
-                System.out.println("Queue: I received a TextMessage at "
-                        + new Date());
+            	
                 TextMessage msg = (TextMessage) message;
                 System.out.println("Message is : " + msg.getText());
+                
             } else if (message instanceof ObjectMessage) {
                 
                 ObjectMessage msg = (ObjectMessage) message;

@@ -69,7 +69,6 @@ public class QueueController extends JFrame implements MessageListener {
 	private boolean						restauranteChenged;
 	
 	private void initiateApp() {
-		// TODO Auto-generated method stub
 
 		restaurantes = FileManager.getSavedRestaurantes();
     	
@@ -89,10 +88,8 @@ public class QueueController extends JFrame implements MessageListener {
 	}
 	
 	private void initiateApp(Date data) {
-		// TODO Auto-generated method stub
 
-		restaurantes = FileManager.getSavedRestaurantes();
-    	
+		restaurantes 		= FileManager.getSavedRestaurantes();
 		votosSemanais 		= new ArrayList<VotacaoSemanal>();
     	currentSemana 		= null;
     	currentDate   		= data;
@@ -121,20 +118,22 @@ public class QueueController extends JFrame implements MessageListener {
 	}
 	
     private void getVotosParseToSemanais() {
-		// TODO Auto-generated method stub
-		Votacao[] votos 		= FileManager.getSavedVotos();
-		Restaurante[] res 		= Arrays.copyOf(restaurantes.toArray(), restaurantes.toArray().length, Restaurante[].class);
-		Calendar calTemp 		= Calendar.getInstance();
-		Calendar calToday 		= Calendar.getInstance();
-		VotacaoSemanal vsTemp 	= new VotacaoSemanal(new Restaurante[0]);
-		int nrSem, index;
+
+    	Votacao[] 		votos 		= FileManager.getSavedVotos();
+		Restaurante[] 	res 		= Arrays.copyOf(restaurantes.toArray(), restaurantes.toArray().length, Restaurante[].class);
+		Calendar 		calTemp 	= Calendar.getInstance();
+		Calendar 		calToday 	= Calendar.getInstance();
+		VotacaoSemanal 	vsTemp 		= new VotacaoSemanal(new Restaurante[0]);
+		int 			nrSem, index;
+		
 		calToday.setTime(currentDate);
 		
 		for (int i = 0; i < votos.length; i++) {
 			
 			calTemp.setTime(votos[i].getData());
 			
-			nrSem =  calTemp.get(Calendar.WEEK_OF_YEAR);
+			nrSem = calTemp.get(Calendar.WEEK_OF_YEAR);
+			
 			vsTemp.setNrSemana(nrSem);
 			vsTemp.setYear(calTemp.YEAR);
 			
@@ -142,6 +141,7 @@ public class QueueController extends JFrame implements MessageListener {
 			
 			if(index < 0){
 				VotacaoSemanal vs = new VotacaoSemanal(res, votos[i].getData());
+				
 				vs.addVoto(votos[i]);
 				votosSemanais.add(vs);
 				
@@ -159,25 +159,16 @@ public class QueueController extends JFrame implements MessageListener {
      * Default constructor. 
      */
     public QueueController() {
-        // TODO Auto-generated constructor stub
-    	
     	initiateApp();
-    	
     	createUIMain();
-		
     }
     
     public QueueController(Date data) {
-        // TODO Auto-generated constructor stub
-    	
     	initiateApp(data);
-    	
     	createUIMain();
-		
     }
 
 	private void createUIMain() {
-		// TODO Auto-generated method stub
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setTitle("Central");
 		setBounds(100, 100, 551, 284);
@@ -269,7 +260,6 @@ public class QueueController extends JFrame implements MessageListener {
 	}
 
 	private void startSelectLunch(String text) {
-		// TODO Auto-generated method stub
 		
 		if(restaurantes.size() <= 0){
 			JOptionPane.showMessageDialog(null, "Para iniciar é necessário ter restaurantes cadastrados");
@@ -279,8 +269,8 @@ public class QueueController extends JFrame implements MessageListener {
 			
 			currentSemana = new VotacaoSemanal(Arrays.copyOf(restaurantes.toArray(), restaurantes.toArray().length, Restaurante[].class));
 		}
-		if(currentSemana.checkHasVotosOfDate(currentDate)){
-			JOptionPane.showMessageDialog(null, "Já aconteceu uma votação neste dia, espere até o próximo para votar.");
+		if(currentSemana.getSelectedRestauranteOfDate(currentDate) != null){
+			JOptionPane.showMessageDialog(null, "Já aconteceu uma votação, o restaurante selecionado foi "+currentSemana.getSelectedRestauranteOfDate(currentDate)+".");
 			return;
 		}
 		if(restauranteChenged){
@@ -297,7 +287,6 @@ public class QueueController extends JFrame implements MessageListener {
 			JOptionPane.showMessageDialog(null, "Para iniciar é necessário ter a quantidade de clientes e em numeros");
 			return;
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.getMessage();
 		}
 		
@@ -318,10 +307,12 @@ public class QueueController extends JFrame implements MessageListener {
 	}
 
 	private void deleteRestaurante(String text) {
-		// TODO Auto-generated method stub
+		
 		Restaurante re = new Restaurante(text, restaurantes.size());
+		
     	if(!restaurantes.contains(re)){
     		JOptionPane.showMessageDialog(null, "Este restaurante não existe");
+    		
     	}else{
     		if(restaurantes.remove(re)){
     			JOptionPane.showMessageDialog(null, "Este restaurante foi removido");
@@ -337,8 +328,8 @@ public class QueueController extends JFrame implements MessageListener {
      * @see MessageListener#onMessage(Message)
      */
     public void onMessage(Message message) {
-        // TODO Auto-generated method stub
-        try {
+
+    	try {
             if (message instanceof TextMessage) {
             	
                 TextMessage msg = (TextMessage) message;
@@ -367,7 +358,6 @@ public class QueueController extends JFrame implements MessageListener {
     }
     
     private void addNewRestaurante(String text) {
-		// TODO Auto-generated method stub
 		
     	Restaurante re = new Restaurante(text, restaurantes.size());
     	if(restaurantes.contains(re)){

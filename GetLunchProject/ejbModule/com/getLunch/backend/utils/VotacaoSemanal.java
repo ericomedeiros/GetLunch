@@ -9,9 +9,9 @@ import com.getLunch.backend.message.Restaurante;
 
 public class VotacaoSemanal {
 	
-	private VotacaoDia[] votacaodias; 
-	private int year;
-	private int nrSemana;
+	private VotacaoDia[] 	votacaodias; 
+	private int 			year;
+	private int 			nrSemana;
 	
 	public int getYear() {
 		return year;
@@ -33,44 +33,62 @@ public class VotacaoSemanal {
 		
 		votacaodias = new VotacaoDia[7];
 		Date data = new Date();
-		for (int i = 0; i < 7; i++) {
-			votacaodias[i] = new VotacaoDia(restaurantes);
-		}
-		
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(data);
-		year  = cal.YEAR;
-		nrSemana = cal.get(Calendar.WEEK_OF_YEAR);
 		
-	}
-	
-	public VotacaoSemanal(Restaurante[] restaurantes, Date data){
+		year      = cal.YEAR;
+		nrSemana  = cal.get(Calendar.WEEK_OF_YEAR);
+		int nrDia = cal.get(Calendar.DAY_OF_WEEK);
+		nrDia     = nrDia-2;
 		
-		votacaodias = new VotacaoDia[7];
+		if(nrDia < 0) 
+			nrDia = 6;
 		
-		for (int i = 0; i < 7; i++) {
-			votacaodias[i] = new VotacaoDia(restaurantes);
+		if(nrDia != 1){
+			cal.add(Calendar.DATE, (1 - nrDia));
 		}
 		
-		
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(data);
-		year  = cal.YEAR;
-		nrSemana = cal.get(Calendar.WEEK_OF_YEAR);
+		for (int i = 0; i < 7; i++) {
+			votacaodias[i] = new VotacaoDia(restaurantes, cal.getTime());
+			cal.add(Calendar.DATE, 1);
+		}
 		
 	}
 	
+	public VotacaoSemanal(Restaurante[] restaurantes, Date dt){
+		
+		votacaodias  = new VotacaoDia[7];
+		Date data    = dt;
+		Calendar cal = Calendar.getInstance();
+		
+		cal.setTime(data);
+		year      = cal.YEAR;
+		nrSemana  = cal.get(Calendar.WEEK_OF_YEAR);
+		int nrDia = cal.get(Calendar.DAY_OF_WEEK);
+		nrDia     = nrDia-2;
+		
+		if(nrDia < 0) 
+			nrDia = 6;
+		
+		if(nrDia != 1){
+			cal.add(Calendar.DATE, (1 - nrDia));
+		}
+		
+		for (int i = 0; i < 7; i++) {
+			votacaodias[i] = new VotacaoDia(restaurantes, cal.getTime());
+			cal.add(Calendar.DATE, 1);
+		}
+		
+	}
 	
 	public void addVoto(Restaurante re){
-		Date data = new Date();
-		
+		Date data    = new Date();
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(data);
 		
 		int nrDia = cal.get(Calendar.DAY_OF_WEEK);
-		
-		nrDia = nrDia-2;
+		nrDia     = nrDia-2;
 		
 		if(nrDia < 0) 
 			nrDia = 6;
@@ -79,30 +97,37 @@ public class VotacaoSemanal {
 	}
 	
 	public void addVoto(Votacao vt){
-		Date data = vt.getData();
-		
+		Date data    = vt.getData();
 		Calendar cal = Calendar.getInstance();
+		
 		cal.setTime(data);
 		
 		int nrDia = cal.get(Calendar.DAY_OF_WEEK);
-		
-		nrDia = nrDia-2;
+		nrDia     = nrDia-2;
 		
 		if(nrDia < 0) 
 			nrDia = 6;
 			
 		votacaodias[nrDia].addVoto(vt);
+		
+		if(votacaodias[nrDia].hasSelectedVotacao()){
+			
+			Restaurante re = votacaodias[nrDia].getSelectedRestaurante();
+			for (int i = nrDia+1; i < 7; i++) {
+				votacaodias[i].removeVoto(re);
+			}
+			
+		}
 	}
 	
 	public Restaurante getToDayRestaurante(){
-		Date data = new Date();
-		
+		Date data    = new Date();
 		Calendar cal = Calendar.getInstance();
+		
 		cal.setTime(data);
 		
 		int nrDia = cal.get(Calendar.DAY_OF_WEEK);
-		
-		nrDia = nrDia-2;
+		nrDia     = nrDia-2;
 		
 		if(nrDia < 0) 
 			nrDia = 6;
@@ -121,8 +146,7 @@ public class VotacaoSemanal {
 		cal.setTime(data);
 		
 		int nrDia = cal.get(Calendar.DAY_OF_WEEK);
-		
-		nrDia = nrDia-2;
+		nrDia     = nrDia-2;
 		
 		if(nrDia < 0) 
 			nrDia = 6;
@@ -136,13 +160,26 @@ public class VotacaoSemanal {
 		cal.setTime(data);
 		
 		int nrDia = cal.get(Calendar.DAY_OF_WEEK);
-		
-		nrDia = nrDia-2;
+		nrDia     = nrDia-2;
 		
 		if(nrDia < 0) 
 			nrDia = 6;
 		
 		return votacaodias[nrDia].checkHasVotos();
+	}
+	
+	public Restaurante getSelectedRestauranteOfDate(Date data){
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		
+		int nrDia = cal.get(Calendar.DAY_OF_WEEK);
+		nrDia     = nrDia-2;
+		
+		if(nrDia < 0) 
+			nrDia = 6;
+		
+		return votacaodias[nrDia].getSelectedRestaurante();
 	}
 	
 	public ArrayList<Votacao> getAllVotos(){

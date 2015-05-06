@@ -18,20 +18,20 @@ import com.getLunch.backend.ejb.QueueController;
 import com.getLunch.ui.Cliente;
 
 public class Listener {
-	private static final String QUEUE_LOOKUP = "queue/MyQueue";
-	private static final String TOPIC_LOOKUP = "topic/MyTopic";
-    private static final String CONNECTION_FACTORY = "ConnectionFactory";
+	private static final String QUEUE_LOOKUP 		= "queue/MyQueue";
+	private static final String TOPIC_LOOKUP 		= "topic/MyTopic";
+    private static final String CONNECTION_FACTORY 	= "ConnectionFactory";
     
     
     public static void addQueueReceiver(QueueController qc){
     	
     	Context context;
 		try {
-			context = ClientUtility.getInitialContextForClient();
-			QueueConnectionFactory factory = (QueueConnectionFactory) context.lookup(CONNECTION_FACTORY);
-	        QueueConnection connection = factory.createQueueConnection();
-	        QueueSession session = connection.createQueueSession(false, QueueSession.AUTO_ACKNOWLEDGE);
-	        Queue queue = (Queue) context.lookup(QUEUE_LOOKUP);
+									context 	= ClientUtility.getInitialContextForClient();
+			QueueConnectionFactory 	factory 	= (QueueConnectionFactory) context.lookup(CONNECTION_FACTORY);
+	        QueueConnection 		connection 	= factory.createQueueConnection();
+	        QueueSession 			session 	= connection.createQueueSession(false, QueueSession.AUTO_ACKNOWLEDGE);
+	        Queue 					queue 		= (Queue) context.lookup(QUEUE_LOOKUP);
 	        
 	        QueueReceiver receiver = session.createReceiver(queue);
 	        receiver.setMessageListener(qc);
@@ -52,12 +52,13 @@ public class Listener {
     	Context context;
 		try {
 			
-			context = ClientUtility.getInitialContextForClient();
-			TopicConnectionFactory factory = (TopicConnectionFactory) context.lookup(CONNECTION_FACTORY);
-	        TopicConnection connection = factory.createTopicConnection();
-	        TopicSession session = connection.createTopicSession(false, TopicSession.AUTO_ACKNOWLEDGE);
-	        Topic topic = (Topic) context.lookup(TOPIC_LOOKUP);
-	        TopicSubscriber topicSubscriber = session.createSubscriber(topic);
+									context 		= ClientUtility.getInitialContextForClient();
+			TopicConnectionFactory 	factory 		= (TopicConnectionFactory) context.lookup(CONNECTION_FACTORY);
+	        TopicConnection 		connection 		= factory.createTopicConnection();
+	        TopicSession 			session 		= connection.createTopicSession(false, TopicSession.AUTO_ACKNOWLEDGE);
+	        Topic 					topic 			= (Topic) context.lookup(TOPIC_LOOKUP);
+	        TopicSubscriber 		topicSubscriber = session.createSubscriber(topic);
+	        
 	        topicSubscriber.setMessageListener(cli);
 	        connection.start();
 	        

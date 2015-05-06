@@ -8,6 +8,8 @@ public class Restaurante implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private int 	id;
+	private String 	name;
 
 	public int getId() {
 		return id;
@@ -16,9 +18,6 @@ public class Restaurante implements Serializable{
 	public void setId(int id) {
 		this.id = id;
 	}
-
-	private int 	id;
-	private String 	name;
 
 	public String getName() {
 		return name;

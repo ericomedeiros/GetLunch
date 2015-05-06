@@ -23,10 +23,13 @@ public class ClientUtility {
 	 
 	    public static Context getInitialContextForClient() throws NamingException {
 	        if (initialContext == null) {
+	        	
 	        	Properties prop = new Properties();
+	        	
 	            prop.setProperty(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY_S);
 	            prop.setProperty(Context.URL_PKG_PREFIXES, JNP_INTERFACES);
 	            prop.setProperty(Context.PROVIDER_URL, PROVIDER_URL);
+	            
 	            initialContext = new InitialContext(prop);
 	        }
 	        return initialContext;

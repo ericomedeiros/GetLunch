@@ -60,10 +60,10 @@ public class FileManager {
 		
 		try {
 
-				f = createFileRestaurantes();
-
-				FileOutputStream fout = new FileOutputStream(f);
-				ObjectOutputStream oout = new ObjectOutputStream(fout);
+									f 	 = createFileRestaurantes();
+				FileOutputStream 	fout = new FileOutputStream(f);
+				ObjectOutputStream 	oout = new ObjectOutputStream(fout);
+				
 				for (int i = 0; i < restaurantes.length; i++) {
 					oout.writeObject(restaurantes[i]);
 					oout.flush();
@@ -84,8 +84,8 @@ public class FileManager {
 	
 	public static ArrayList<Restaurante> getSavedRestaurantes() {
 		
-		ArrayList<Restaurante> res = new ArrayList<Restaurante>();
-		File f = null;
+		ArrayList<Restaurante> 	res = new ArrayList<Restaurante>();
+		File 					f 	= null;
 		
 		try {
 				
@@ -95,9 +95,10 @@ public class FileManager {
 				return res;
 			}
 
-			FileInputStream fin = new FileInputStream(f);
-			ObjectInputStream oin = new ObjectInputStream(fin);
-			Object obj = oin.readObject();
+			FileInputStream 	fin = new FileInputStream(f);
+			ObjectInputStream 	oin = new ObjectInputStream(fin);
+			Object 				obj = oin.readObject();
+			
 			while(obj != null){
 				res.add((Restaurante) obj);
 				obj = oin.readObject();
@@ -125,10 +126,10 @@ public class FileManager {
 		
 		try {
 
-				f = createFileVotos();
-
-				FileOutputStream fout = new FileOutputStream(f);
-				ObjectOutputStream oout = new ObjectOutputStream(fout);
+									f 	 = createFileVotos();
+				FileOutputStream 	fout = new FileOutputStream(f);
+				ObjectOutputStream 	oout = new ObjectOutputStream(fout);
+				
 				for (int i = 0; i < votos.length; i++) {
 					oout.writeObject(votos[i]);
 					oout.flush();
@@ -159,9 +160,10 @@ public class FileManager {
 				return Arrays.copyOf(vts.toArray(), vts.toArray().length, Votacao[].class);
 			}
 
-			FileInputStream fin = new FileInputStream(f);
-			ObjectInputStream oin = new ObjectInputStream(fin);
-			Object obj = oin.readObject();
+			FileInputStream 	fin = new FileInputStream(f);
+			ObjectInputStream 	oin = new ObjectInputStream(fin);
+			Object 				obj = oin.readObject();
+			
 			while(obj != null){
 				vts.add((Votacao) obj);
 				obj = oin.readObject();
@@ -182,4 +184,5 @@ public class FileManager {
 		
 		return Arrays.copyOf(vts.toArray(), vts.toArray().length, Votacao[].class);
 	}
+
 }
