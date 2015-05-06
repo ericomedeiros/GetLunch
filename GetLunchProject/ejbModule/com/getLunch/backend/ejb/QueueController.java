@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.ejb.ActivationConfigProperty;
@@ -34,8 +35,10 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.getLunch.backend.message.Restaurante;
+import com.getLunch.backend.utils.FileManager;
 import com.getLunch.backend.utils.Listener;
 import com.getLunch.backend.utils.Sender;
+import com.getLunch.backend.utils.Votacao;
 import com.getLunch.backend.utils.VotacaoSemanal;
 import com.getLunch.ui.Cliente;
 
@@ -63,18 +66,96 @@ public class QueueController extends JFrame implements MessageListener {
 	private VotacaoSemanal				currentSemana; 
 	private int 						nrCliente;
 	private Date						currentDate;
+	private boolean						restauranteChenged;
 	
 	private void initiateApp() {
 		// TODO Auto-generated method stub
-		restaurantes  = new ArrayList<Restaurante>();
-    	votosSemanais = new ArrayList<VotacaoSemanal>();
-    	currentSemana = null;
-    	nrCliente     = 0;
-    	currentDate   = new Date();
+
+		restaurantes = FileManager.getSavedRestaurantes();
+    	
+		votosSemanais 		= new ArrayList<VotacaoSemanal>();
+    	currentSemana 		= null;
+    	currentDate   		= new Date();
+    	nrCliente     		= 0;
+    	restauranteChenged 	= false;
+    	
+    	getVotosParseToSemanais();
+    	
+    	if(currentSemana == null){
+    		currentSemana = new VotacaoSemanal(Arrays.copyOf(restaurantes.toArray(), restaurantes.toArray().length, Restaurante[].class), currentDate);
+    		votosSemanais.add(currentSemana);
+    	}
     	
 	}
 	
-    /**
+	private void initiateApp(Date data) {
+		// TODO Auto-generated method stub
+
+		restaurantes = FileManager.getSavedRestaurantes();
+    	
+		votosSemanais 		= new ArrayList<VotacaoSemanal>();
+    	currentSemana 		= null;
+    	currentDate   		= data;
+    	nrCliente     		= 0;
+    	restauranteChenged 	= false;
+    	
+    	getVotosParseToSemanais();
+    	
+    	if(currentSemana == null){
+    		currentSemana = new VotacaoSemanal(Arrays.copyOf(restaurantes.toArray(), restaurantes.toArray().length, Restaurante[].class), currentDate);
+    	}
+    	
+	}
+	
+	private void finalizeApp(){
+		
+		ArrayList<Votacao> votosTemp = new ArrayList<Votacao>();
+		
+		for (int i = 0; i < votosSemanais.size(); i++) {
+			votosTemp.addAll(votosSemanais.get(i).getAllVotos());
+		}
+		
+		FileManager.writeRestaurantes(Arrays.copyOf(restaurantes.toArray(), restaurantes.toArray().length, Restaurante[].class));
+		FileManager.writeVotos(Arrays.copyOf(votosTemp.toArray(), votosTemp.toArray().length, Votacao[].class));
+		
+	}
+	
+    private void getVotosParseToSemanais() {
+		// TODO Auto-generated method stub
+		Votacao[] votos 		= FileManager.getSavedVotos();
+		Restaurante[] res 		= Arrays.copyOf(restaurantes.toArray(), restaurantes.toArray().length, Restaurante[].class);
+		Calendar calTemp 		= Calendar.getInstance();
+		Calendar calToday 		= Calendar.getInstance();
+		VotacaoSemanal vsTemp 	= new VotacaoSemanal(new Restaurante[0]);
+		int nrSem, index;
+		calToday.setTime(currentDate);
+		
+		for (int i = 0; i < votos.length; i++) {
+			
+			calTemp.setTime(votos[i].getData());
+			
+			nrSem =  calTemp.get(Calendar.WEEK_OF_YEAR);
+			vsTemp.setNrSemana(nrSem);
+			vsTemp.setYear(calTemp.YEAR);
+			
+			index = votosSemanais.indexOf(vsTemp);
+			
+			if(index < 0){
+				VotacaoSemanal vs = new VotacaoSemanal(res, votos[i].getData());
+				vs.addVoto(votos[i]);
+				votosSemanais.add(vs);
+				
+				if(calTemp.WEEK_OF_YEAR == calToday.WEEK_OF_YEAR && calTemp.YEAR == calToday.YEAR){
+					currentSemana = vs;
+				}
+			}else{
+				votosSemanais.get(index).addVoto(votos[i]);
+			}
+			
+		}
+	}
+
+	/**
      * Default constructor. 
      */
     public QueueController() {
@@ -82,7 +163,22 @@ public class QueueController extends JFrame implements MessageListener {
     	
     	initiateApp();
     	
-    	setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    	createUIMain();
+		
+    }
+    
+    public QueueController(Date data) {
+        // TODO Auto-generated constructor stub
+    	
+    	initiateApp(data);
+    	
+    	createUIMain();
+		
+    }
+
+	private void createUIMain() {
+		// TODO Auto-generated method stub
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setTitle("Central");
 		setBounds(100, 100, 551, 284);
 		contentPane = new JPanel();
@@ -163,14 +259,14 @@ public class QueueController extends JFrame implements MessageListener {
 		btnFinalizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
+				finalizeApp();
 				dispose();
 				System.exit(0);
 			}
 		});
 		btnFinalizar.setBounds(181, 207, 89, 23);
 		contentPane.add(btnFinalizar);
-		
-    }
+	}
 
 	private void startSelectLunch(String text) {
 		// TODO Auto-generated method stub
@@ -187,19 +283,23 @@ public class QueueController extends JFrame implements MessageListener {
 			JOptionPane.showMessageDialog(null, "Já aconteceu uma votação neste dia, espere até o próximo para votar.");
 			return;
 		}
+		if(restauranteChenged){
+			votosSemanais.remove(currentSemana);
+			currentSemana = new VotacaoSemanal(Arrays.copyOf(restaurantes.toArray(), restaurantes.toArray().length, Restaurante[].class), currentDate);
+			votosSemanais.add(currentSemana);
+		}
 		
 		try {
+			
 			nrCliente = Integer.parseInt(text);
 		
 		} catch (NumberFormatException e) {
 			JOptionPane.showMessageDialog(null, "Para iniciar é necessário ter a quantidade de clientes e em numeros");
 			return;
-			
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.getMessage();
 		}
-		
 		
 		if(nrCliente == 0){
 			JOptionPane.showMessageDialog(null, "Para iniciar é necessário ter a quantidade de clientes");
@@ -225,10 +325,12 @@ public class QueueController extends JFrame implements MessageListener {
     	}else{
     		if(restaurantes.remove(re)){
     			JOptionPane.showMessageDialog(null, "Este restaurante foi removido");
+    			restauranteChenged = true;
     		}else{
     			JOptionPane.showMessageDialog(null, "Ocorreu um erro, não foi possivel remover restaurante");
     		}
     	}
+    	
 	}
 
 	/**
@@ -238,21 +340,17 @@ public class QueueController extends JFrame implements MessageListener {
         // TODO Auto-generated method stub
         try {
             if (message instanceof TextMessage) {
-                System.out.println("Queue: I received a TextMessage at "
-                        + new Date());
+            	
                 TextMessage msg = (TextMessage) message;
                 System.out.println("Message is : " + msg.getText());
             } else if (message instanceof ObjectMessage) {
-                System.out.println("Queue: I received an ObjectMessage at "
-                        + new Date());
+            	
                 ObjectMessage msg = (ObjectMessage) message;
-                Restaurante re = (Restaurante) msg.getObject();
-                System.out.println("Restaurante recebido: "+re);
+                Restaurante re    = (Restaurante) msg.getObject();
                 
                 currentSemana.addVoto(re);
                 
                 if(currentSemana.getTotalVotosOfDate(currentDate) == nrCliente){
-                	System.out.println("Entrou no if");
                 	Sender.sendObjectMessageToTopic(currentSemana.getToDayRestaurante());
                 	nrCliente = 0;
                 	btnCriar.setEnabled(true);
@@ -277,6 +375,7 @@ public class QueueController extends JFrame implements MessageListener {
     	}else{
     		if(restaurantes.add(re)){
     			JOptionPane.showMessageDialog(null, "Este restaurante foi adicionado");
+    			restauranteChenged = true;
     		}else{
     			JOptionPane.showMessageDialog(null, "Ocorreu um erro, não foi possivel adicionar restaurante");
     		}

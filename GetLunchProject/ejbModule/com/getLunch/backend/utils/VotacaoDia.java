@@ -32,6 +32,16 @@ public class VotacaoDia {
 		}
 		
 	}
+	public void addVoto(Votacao vt) {
+		
+		for (int i = 0; i < votacoes.length; i++) {
+			if(votacoes[i].getRestaurante().equals(vt.getRestaurante())){
+				votacoes[i] = vt;
+				return;
+			}
+		}
+		
+	}
 	public void removeVoto(Restaurante restaurante) {
 			
 		for (int i = 0; i < votacoes.length; i++) {

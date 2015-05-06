@@ -1,5 +1,7 @@
 package com.getLunch.backend.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -14,11 +16,19 @@ public class VotacaoSemanal {
 	public int getYear() {
 		return year;
 	}
+	
 	public int getNrSemana() {
 		return nrSemana;
 	}
 	
-	@SuppressWarnings("deprecation")
+	public void setYear(int year) {
+		this.year = year;
+	}
+	
+	public void setNrSemana(int nrSemana) {
+		this.nrSemana = nrSemana;
+	}
+	
 	public VotacaoSemanal(Restaurante[] restaurantes){
 		
 		votacaodias = new VotacaoDia[7];
@@ -27,12 +37,30 @@ public class VotacaoSemanal {
 			votacaodias[i] = new VotacaoDia(restaurantes);
 		}
 		
-		year  = data.getYear();
+		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(data);
+		year  = cal.YEAR;
 		nrSemana = cal.get(Calendar.WEEK_OF_YEAR);
 		
 	}
+	
+	public VotacaoSemanal(Restaurante[] restaurantes, Date data){
+		
+		votacaodias = new VotacaoDia[7];
+		
+		for (int i = 0; i < 7; i++) {
+			votacaodias[i] = new VotacaoDia(restaurantes);
+		}
+		
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		year  = cal.YEAR;
+		nrSemana = cal.get(Calendar.WEEK_OF_YEAR);
+		
+	}
+	
 	
 	public void addVoto(Restaurante re){
 		Date data = new Date();
@@ -49,6 +77,23 @@ public class VotacaoSemanal {
 		
 		votacaodias[nrDia].addVoto(re);
 	}
+	
+	public void addVoto(Votacao vt){
+		Date data = vt.getData();
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		
+		int nrDia = cal.get(Calendar.DAY_OF_WEEK);
+		
+		nrDia = nrDia-2;
+		
+		if(nrDia < 0) 
+			nrDia = 6;
+			
+		votacaodias[nrDia].addVoto(vt);
+	}
+	
 	public Restaurante getToDayRestaurante(){
 		Date data = new Date();
 		
@@ -98,6 +143,20 @@ public class VotacaoSemanal {
 			nrDia = 6;
 		
 		return votacaodias[nrDia].checkHasVotos();
+	}
+	
+	public ArrayList<Votacao> getAllVotos(){
+		
+		ArrayList<Votacao> 	votosTemp = new ArrayList<Votacao>();
+		
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < votacaodias[i].getVotacoes().length; j++) {
+				votosTemp.add(votacaodias[i].getVotacoes()[j]);
+			}
+		}
+		
+		return votosTemp;
+		
 	}
 	
 	@Override

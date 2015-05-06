@@ -38,7 +38,9 @@ public class Cliente extends JFrame implements MessageListener{
 	private static final long 		serialVersionUID = 1L;
 	private JPanel 					contentPane;
 	private JComboBox<Restaurante>	comboBox;
-	private JLabel 					label;
+	private JLabel 					lbEnviado;
+	private JLabel 					lbEscolhido;
+	private JLabel 					lbFinalizar;
 	private JButton 				btnSelecionar;
 	private JButton 				btnFechar;
 
@@ -68,16 +70,24 @@ public class Cliente extends JFrame implements MessageListener{
 				Sender.sendObjectMessageToQueue(re);
 				btnSelecionar.setEnabled(false);
 				comboBox.setEnabled(false);
-				label.setText("O restaurante que escolheu foi: "+ re.toString());
+				lbEnviado.setText("O restaurante que escolheu foi: "+ re.toString());
 				
 			}
 		});
 		btnSelecionar.setBounds(160, 66, 100, 23);
 		contentPane.add(btnSelecionar);
 		
-		label = new JLabel("");
-		label.setBounds(23, 128, 379, 61);
-		contentPane.add(label);
+		lbEnviado = new JLabel("");
+		lbEnviado.setBounds(23, 128, 379, 14);
+		contentPane.add(lbEnviado);
+		
+		lbEscolhido = new JLabel("");
+		lbEscolhido.setBounds(23, 145, 379, 14);
+		contentPane.add(lbEscolhido);
+		
+		lbFinalizar = new JLabel("");
+		lbFinalizar.setBounds(23, 162, 379, 14);
+		contentPane.add(lbFinalizar);
 		
 		btnFechar = new JButton("Fechar");
 		btnFechar.addActionListener(new ActionListener() {
@@ -102,10 +112,9 @@ public class Cliente extends JFrame implements MessageListener{
                 
                 ObjectMessage msg = (ObjectMessage) message;
                 Restaurante re = (Restaurante) msg.getObject();
-                String st = label.getText() + "\n" +
-                		"\n" +
-                		"E o restaurante escolhido foi: "+ re + ". Por favor finalize a operação para escolher o próximo almoço";
-                label.setText(st);
+                lbEscolhido.setText("E o restaurante escolhido foi: "+ re + ",");
+                lbFinalizar.setText("Por favor finalize a operação para escolher o próximo almoço");
+                
                 btnFechar.setEnabled(true);
             } else {
                 System.out.println("Not valid message for this Queue MDB");
